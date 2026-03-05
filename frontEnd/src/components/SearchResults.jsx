@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
+import unplugged from "../assets/unplugged.png";
+import { getToken } from "../auth/auth";    
 const SearchResults = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -45,79 +46,100 @@ const SearchResults = () => {
     toast.success(`Product with ID ${productId} added to cart!`);
     // Add your cart logic here
   };
-
   if (loading) {
     return (
-      <div className="container mt-5 pt-5 d-flex justify-content-center align-items-center" style={{ minHeight: "50vh" }}>
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
+      <div className="max-w-7xl mx-auto px-4 mt-20 flex justify-center items-center min-h-[50vh]">
+        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
-
+  
   return (
-    <div className="container mt-5 pt-5">
-      <h2 className="mb-4">Search Results</h2>
-      
+    <div className="max-w-7xl mx-auto px-4 mt-20">
+  
+      <h2 className="text-2xl font-semibold mb-4">Search Results</h2>
+  
       {searchData.length === 0 ? (
-        <div className="alert alert-info">
-          <i className="bi bi-info-circle-fill me-2"></i>
+        <div className="bg-blue-100 text-blue-700 px-4 py-3 rounded flex items-center">
+          <span className="mr-2">ℹ️</span>
           No products found matching your search criteria.
         </div>
       ) : (
         <>
-          <p className="text-muted mb-4">{searchData.length} product(s) found</p>
-          
-          <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+          <p className="text-gray-500 mb-4">
+            {searchData.length} product(s) found
+          </p>
+  
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+  
             {searchData.map((product) => (
-              <div key={product.id} className="col">
-                <div className="card h-100 shadow-sm">
-                  <img 
-                    src={convertBase64ToDataURL(product.productImage)} 
-                    className="card-img-top p-3" 
-                    alt={product.name}
-                    style={{ height: "200px", objectFit: "contain", cursor: "pointer" }}
-                    onClick={() => handleViewProduct(product.id)}
-                  />
-                  <div className="card-body d-flex flex-column">
-                    <h5 className="card-title">{product.name}</h5>
-                    <p className="card-text text-muted mb-1">{product.brand}</p>
-                    <div className="mb-2">
-                      <span className="badge bg-secondary">{product.category}</span>
-                    </div>
-                    <p className="card-text small">
-                      {product.description.length > 100
-                        ? product.description.substring(0, 100) + "..."
-                        : product.description}
-                    </p>
-                    <h5 className="card-text text-primary mt-auto mb-3">₹{product.price.toLocaleString('en-IN')}</h5>
-                    <div className="d-flex justify-content-between mt-auto">
-                      <button 
-                        className="btn btn-outline-primary btn-sm"
-                        onClick={() => handleViewProduct(product.id)}
-                      >
-                        View Details
-                      </button>
-                      <button 
-                        className="btn btn-primary btn-sm"
-                        onClick={() => handleAddToCart(product.id)}
-                        disabled={!product.productAvailable || product.stockQuantity <= 0}
-                      >
-                        {product.productAvailable && product.stockQuantity > 0
-                          ? "Add to Cart"
-                          : "Out of Stock"}
-                      </button>
-                    </div>
+              <div key={product.id} className="bg-white rounded-lg shadow hover:shadow-md transition h-full flex flex-col">
+  
+                <img
+                  src={convertBase64ToDataURL(product.productImage)}
+                  alt={product.name}
+                  className="p-4 h-[200px] object-contain cursor-pointer"
+                  onClick={() => handleViewProduct(product.id)}
+                />
+  
+                <div className="p-4 flex flex-col flex-grow">
+  
+                  <h5 className="font-semibold text-lg">{product.name}</h5>
+  
+                  <p className="text-gray-500 text-sm mb-1">
+                    {product.brand}
+                  </p>
+  
+                  <div className="mb-2">
+                    <span className="bg-gray-500 text-white text-xs px-2 py-1 rounded">
+                      {product.category}
+                    </span>
+                  </div>
+  
+                  <p className="text-sm text-gray-600 mb-2">
+                    {product.description.length > 100
+                      ? product.description.substring(0, 100) + "..."
+                      : product.description}
+                  </p>
+  
+                  <h5 className="text-blue-600 font-semibold mt-auto mb-3">
+                    Rs.{product.price.toLocaleString("en-US")}/-
+                  </h5>
+  
+                  <div className="flex justify-between mt-auto">
+  
+                    <button
+                      className="border border-blue-600 text-blue-600 px-3 py-1 rounded text-sm hover:bg-blue-50"
+                      onClick={() => handleViewProduct(product.id)}
+                    >
+                      View Details
+                    </button>
+  
+                    <button
+                      className={`px-3 py-1 rounded text-sm text-white ${
+                        product.productAvailable && product.stockQuantity > 0
+                          ? "bg-blue-600 hover:bg-blue-700"
+                          : "bg-gray-400 cursor-not-allowed"
+                      }`}
+                      onClick={() => handleAddToCart(product.id)}
+                      disabled={!product.productAvailable || product.stockQuantity <= 0}
+                    >
+                      {product.productAvailable && product.stockQuantity > 0
+                        ? "Add to Cart"
+                        : "Out of Stock"}
+                    </button>
+  
                   </div>
                 </div>
               </div>
             ))}
+  
           </div>
         </>
       )}
     </div>
   );
+  
 };
 
 export default SearchResults;

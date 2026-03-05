@@ -1,4 +1,4 @@
-package com.telusko.springsecdemo.service;
+package com.kayanan.springecom.service.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -8,9 +8,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.telusko.springsecdemo.dao.UserRepo;
-import com.telusko.springsecdemo.model.User;
-import com.telusko.springsecdemo.model.UserPrincipal;
+import com.kayanan.springecom.repo.UserRepo;
+import com.kayanan.springecom.model.User;
+import com.kayanan.springecom.model.UserPrincipal;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService {

@@ -1,4 +1,4 @@
-package com.telusko.springsecdemo.service;
+package com.kayanan.springecom.service.auth;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

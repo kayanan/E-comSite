@@ -2,8 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import AppContext from "../Context/Context";
 import axios from "axios";
 import CheckoutPopup from "./CheckoutPopup";
-import { Button } from 'react-bootstrap';
-
+import { getToken } from "../auth/auth";
 const Cart = () => {
   const { cart, removeFromCart, clearCart } = useContext(AppContext);
   const [cartItems, setCartItems] = useState([]);
@@ -17,7 +16,7 @@ const Cart = () => {
     const fetchImagesAndUpdateCart = async () => {
       console.log("Cart", cart);
       try {
-        const response = await axios.get(`${baseUrl}/api/products`);
+        const response = await axios.get(`${baseUrl}/api/products` ,{headers: { "Authorization": `Bearer ${getToken()}` } });
         console.log("cart", cart);
         setCartItems(cart);
       } catch (error) {
@@ -110,6 +109,7 @@ const Cart = () => {
           .put(`${baseUrl}/api/product/${item.id}`, cartProduct, {
             headers: {
               "Content-Type": "multipart/form-data",
+              "Authorization": `Bearer ${getToken()}`
             },
           })
           .then((response) => {
@@ -128,117 +128,171 @@ const Cart = () => {
   };
 
   return (
-    <div className="container mt-5 pt-5">
-      <div className="row justify-content-center">
-        <div className="col-md-10">
-          <div className="card shadow">
-            <div className="card-header bg-white">
-              <h4 className="mb-0">Shopping Cart</h4>
+    <div className="max-w-6xl mx-auto mt-10 pt-10 px-4">
+      <div className="flex justify-center">
+        <div className="w-full lg:w-10/12">
+  
+          <div className="bg-white rounded-lg shadow">
+  
+            <div className="border-b p-4">
+              <h4 className="text-lg font-semibold">Shopping Cart</h4>
             </div>
-            <div className="card-body">
+  
+            <div className="p-4">
+  
               {cartItems.length === 0 ? (
-                <div className="text-center py-5">
-                  <i className="bi bi-cart-x fs-1 text-muted"></i>
-                  <h5 className="mt-3">Your cart is empty</h5>
-                  <a href="/" className="btn btn-primary mt-3">Continue Shopping</a>
+  
+                <div className="text-center py-10">
+                  <div className="text-5xl text-gray-400">🛒</div>
+                  <h5 className="mt-3 text-lg">Your cart is empty</h5>
+  
+                  <a
+                    href="/"
+                    className="inline-block mt-3 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                  >
+                    Continue Shopping
+                  </a>
                 </div>
+  
               ) : (
                 <>
-                  <div className="table-responsive">
-                    <table className="table table-hover align-middle">
+  
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+  
                       <thead>
-                        <tr>
-                          <th>Product</th>
-                          <th>Price</th>
-                          <th>Quantity</th>
-                          <th>Total</th>
-                          <th>Action</th>
+                        <tr className="border-b">
+                          <th className="p-2">Product</th>
+                          <th className="p-2">Price</th>
+                          <th className="p-2">Quantity</th>
+                          <th className="p-2">Total</th>
+                          <th className="p-2">Action</th>
                         </tr>
                       </thead>
+  
                       <tbody>
+  
                         {cartItems.map((item) => (
-                          <tr key={item.id}>
-                            <td>
-                              <div className="d-flex align-items-center">
+  
+                          <tr key={item.id} className="border-b">
+  
+                            <td className="p-2">
+                              <div className="flex items-center gap-3">
+  
                                 <img
                                   src={convertBase64ToDataURL(item.imageData)}
                                   alt={item.name}
-                                  className="rounded me-3"
-                                  width="80"
-                                  height="80"
-                                  style={{ objectFit: "cover" }}
+                                  className="rounded w-20 h-20 object-cover"
                                 />
+  
                                 <div>
-                                  <h6 className="mb-0">{item.name}</h6>
-                                  <small className="text-muted">{item.brand}</small>
+                                  <h6 className="font-semibold">{item.name}</h6>
+                                  <small className="text-gray-500">
+                                    {item.brand}
+                                  </small>
                                 </div>
+  
                               </div>
                             </td>
-                            <td>₹ {item.price}</td>
-                            <td>
-                              <div className="input-group input-group-sm" style={{ width: "120px" }}>
+  
+                            <td className="p-2">Rs. {item.price}</td>
+  
+                            <td className="p-2">
+  
+                              <div className="flex items-center border rounded w-[120px]">
+  
                                 <button
-                                  className="btn btn-outline-secondary"
+                                  className={`px-3 py-1 border-r ${
+                                    item.quantity === 1
+                                      ? "opacity-50 cursor-not-allowed"
+                                      : ""
+                                  }`}
                                   type="button"
-                                  onClick={() => handleDecreaseQuantity(item.id)}
+                                  onClick={() =>
+                                    handleDecreaseQuantity(item.id)
+                                  }
                                 >
-                                  <i className="bi bi-dash"></i>
+                                  −
                                 </button>
+  
                                 <input
                                   type="text"
-                                  className="form-control text-center"
+                                  className="w-full text-center outline-none"
                                   value={item.quantity}
                                   readOnly
                                 />
+  
                                 <button
-                                  className="btn btn-outline-secondary"
+                                  className={`px-3 py-1 border-l ${
+                                    item.quantity === item.stockQuantity
+                                      ? "opacity-50 cursor-not-allowed"
+                                      : ""
+                                  }`}
                                   type="button"
-                                  onClick={() => handleIncreaseQuantity(item.id)}
+                                  onClick={() =>
+                                    handleIncreaseQuantity(item.id)
+                                  }
                                 >
-                                  <i className="bi bi-plus"></i>
+                                  +
                                 </button>
+  
                               </div>
+  
                             </td>
-                            <td className="fw-bold">₹ {(item.price * item.quantity).toFixed(2)}</td>
-                            <td>
+  
+                            <td className="p-2 font-bold">
+                              Rs. {(item.price * item.quantity).toFixed(2)}
+                            </td>
+  
+                            <td className="p-2">
                               <button
-                                className="btn btn-sm btn-outline-danger"
-                                onClick={() => handleRemoveFromCart(item.id)}
+                                className={`border border-red-500 text-red-500 px-2 py-1 rounded hover:bg-red-500 hover:text-white ${
+                                  item.quantity === 1
+                                    ? "opacity-50 cursor-not-allowed"
+                                    : ""
+                                }`}
+                                onClick={() =>
+                                  handleRemoveFromCart(item.id)
+                                }
                               >
-                                <i className="bi bi-trash"></i>
+                                🗑
                               </button>
                             </td>
+  
                           </tr>
+  
                         ))}
+  
                       </tbody>
                     </table>
                   </div>
-
-                  <div className="card mt-3">
-                    <div className="card-body">
-                      <div className="d-flex justify-content-between align-items-center">
-                        <h5 className="mb-0">Total:</h5>
-                        <h5 className="mb-0">₹ {totalPrice.toFixed(2)}</h5>
-                      </div>
-                    </div>
+  
+                  <div className="bg-gray-50 rounded mt-4 p-4 flex justify-between items-center">
+                    <h5 className="font-semibold">Total:</h5>
+                    <h5 className="font-semibold">
+                      Rs. {totalPrice.toFixed(2)}
+                    </h5>
                   </div>
-
-                  <div className="d-grid mt-4">
-                    <Button
-                      variant="primary"
-                      size="lg"
+  
+                  <div className="grid mt-4">
+                    <button
+                      className="bg-blue-600 text-white py-3 rounded-lg text-lg hover:bg-blue-700"
+                      type="button"
                       onClick={() => setShowModal(true)}
                     >
                       Proceed to Checkout
-                    </Button>
+                    </button>
                   </div>
+  
                 </>
               )}
+  
             </div>
           </div>
+  
         </div>
       </div>
-
+  
       <CheckoutPopup
         show={showModal}
         handleClose={() => setShowModal(false)}
@@ -246,6 +300,7 @@ const Cart = () => {
         totalPrice={totalPrice}
         handleCheckout={handleCheckout}
       />
+  
     </div>
   );
 };

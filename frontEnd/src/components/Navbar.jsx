@@ -1,13 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useRef, useState ,useContext } from "react";
+import AppContext from "../Context/Context";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-
+import { getToken } from "../auth/auth";
+import LogoutButton from "../auth/LogoutButton";
 const Navbar = ({ onSelectCategory }) => {
   const getInitialTheme = () => {
     const storedTheme = localStorage.getItem("theme");
     return storedTheme ? storedTheme : "light-theme";
   };
-  
+  const { naveOpen,setNavOpen} = useContext(AppContext);
+  const location =useLocation();
   const [selectedCategory, setSelectedCategory] = useState("");
   const [theme, setTheme] = useState(getInitialTheme());
   const [input, setInput] = useState("");
@@ -47,10 +50,21 @@ useEffect(() => {
   };
 }, []);
 
+useEffect(()=>{
+  if(location.pathname.includes("login") ||location.pathname.includes("signup")){
+    setNavOpen(false)
+  }
+  else{
+    setNavOpen(true)
+  }
+},[location.pathname])
+
   // Initial data fetch (if needed)
   const fetchInitialData = async () => {
     try {
-      const response = await axios.get(`${baseUrl}/api/products`);
+      const response = await axios.get(`${baseUrl}/api/products`, {
+        headers: { "Authorization": `Bearer ${getToken()}`, "Content-Type": "application/json" }
+      });
       console.log(response.data, 'navbar initial data');
     } catch (error) {
       console.error("Error fetching initial data:", error);
@@ -130,85 +144,133 @@ const handleLinkClick = () => {
     "Toys",
     "Fashion",
   ];
+
+  if(!naveOpen){
+    return(<></>)
+  }
   
   return (
-    <nav className="navbar navbar-expand-lg fixed-top bg-white shadow-sm" ref={navbarRef}>
-      <div className="container-fluid">
-        <button
-  className="navbar-toggler"
-  type="button"
-  onClick={handleNavbarToggle}
-  aria-controls="navbarSupportedContent"
-  aria-expanded={!isNavCollapsed}
-  aria-label="Toggle navigation"
->
-  <span className="navbar-toggler-icon"></span>
-</button>
-        <div
-          className={`${isNavCollapsed ? 'collapse' : ''} navbar-collapse`}
-          id="navbarSupportedContent"
-        >
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <a className="nav-link active" aria-current="page" href="/" onClick={handleLinkClick}>
-                Home
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link" href="/add_product" onClick={handleLinkClick}>
-                Add Product
-              </a>
-            </li>
-
-            <li className="nav-item">
-              <a className="nav-link" href="/orders" onClick={handleLinkClick}>
-                Orders
-              </a>
-            </li>
-      
-
-          </ul>
-          
-         
-          
-          <div className="d-flex align-items-center">
-            <a href="/cart" className="nav-link text-dark me-3" onClick={handleLinkClick}>
-              <i className="bi bi-cart me-1"></i>
-              Cart
-            </a>
-            <form className="d-flex" role="search" onSubmit={handleSubmit} id="searchForm">
-              <input
-                className="form-control me-2"
-                type="search"
-                placeholder="Type to search"
-                aria-label="Search"
-                value={input}
-                onChange={(e) => handleInputChange(e.target.value)}
-              />
-              {isLoading ? (
-                <button
-                  className="btn btn-outline-success"
-                  type="button"
-                  disabled
-                >
-                  <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                  <span className="visually-hidden">Loading...</span>
-                </button>
-              ) : (
-                <button
-                  className="btn btn-outline-success"
-                  type="submit"
-                >
-                  Search
-                </button>
-              )}
-            </form>
+    <nav
+      className="fixed top-0 w-full bg-white shadow-sm z-50"
+      ref={navbarRef}
+    >
+      <div className="max-w-7xl mx-auto px-4">
+        
+        <div className="flex items-center justify-between py-3">
+  
+          {/* Toggle Button */}
+          <button
+            className="lg:hidden border rounded p-2"
+            type="button"
+            onClick={handleNavbarToggle}
+            aria-controls="navbarSupportedContent"
+            aria-expanded={!isNavCollapsed}
+            aria-label="Toggle navigation"
+          >
+            ☰
+          </button>
+  
+          {/* Navbar Items */}
+          <div
+            className={`${
+              isNavCollapsed ? "hidden" : "block"
+            } w-full lg:flex lg:items-center lg:justify-between`}
+            id="navbarSupportedContent"
+          >
             
-            {showNoProductsMessage && (
-              <div className="alert alert-warning position-absolute mt-2" style={{ top: "100%", zIndex: 1000 }}>
-                No products found matching your search.
-              </div>
-            )}
+            {/* Left Links */}
+            <ul className="flex flex-col lg:flex-row lg:space-x-6 mt-3 lg:mt-0">
+  
+              <li>
+                <a
+                  className="block py-2 text-gray-700 hover:text-blue-600"
+                  href="/"
+                  onClick={handleLinkClick}
+                >
+                  Home
+                </a>
+              </li>
+  
+              <li>
+                <a
+                  className="block py-2 text-gray-700 hover:text-blue-600"
+                  href="/add_product"
+                  onClick={handleLinkClick}
+                >
+                  Add Product
+                </a>
+              </li>
+  
+              <li>
+                <a
+                  className="block py-2 text-gray-700 hover:text-blue-600"
+                  href="/orders"
+                  onClick={handleLinkClick}
+                >
+                  Orders
+                </a>
+              </li>
+  
+            </ul>
+  
+            {/* Right Section */}
+            <div className="flex flex-col lg:flex-row lg:items-center gap-3 mt-3 lg:mt-0">
+  
+              {/* Cart */}
+              <a
+                href="/cart"
+                className="flex items-center text-gray-700 hover:text-blue-600"
+                onClick={handleLinkClick}
+              >
+                🛒 <span className="ml-1">Cart</span>
+              </a>
+  
+              {/* Search */}
+              <form
+                className="flex"
+                role="search"
+                onSubmit={handleSubmit}
+                id="searchForm"
+              >
+                <input
+                  className="border rounded-l px-3 py-2 outline-none"
+                  type="search"
+                  placeholder="Type to search"
+                  aria-label="Search"
+                  value={input}
+                  onChange={(e) => handleInputChange(e.target.value)}
+                />
+  
+                {isLoading ? (
+                  <button
+                    className="border border-green-600 text-green-600 px-4 rounded-r flex items-center"
+                    type="button"
+                    disabled
+                  >
+                    Loading...
+                  </button>
+                ) : (
+                  <button
+                    className="border border-green-600 text-green-600 px-4 rounded-r hover:bg-green-600 hover:text-white transition"
+                    type="submit"
+                  >
+                    Search
+                  </button>
+                )}
+              </form>
+  
+              {/* No Products Alert */}
+              {showNoProductsMessage && (
+                <div className="absolute bg-yellow-100 text-yellow-800 px-4 py-2 rounded shadow mt-2"
+                  style={{ top: "100%" }}
+                >
+                  No products found matching your search.
+                </div>
+              )}
+  
+            </div>
+            <div className="bg-gray-300 px-2 py-1 rounded hover:bg-gray-400 hover:text-white transition "><LogoutButton /></div>
+  
           </div>
         </div>
       </div>

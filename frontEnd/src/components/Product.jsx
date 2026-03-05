@@ -2,9 +2,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { useState } from "react";
 import AppContext from "../Context/Context";
-import axios from "../axios";
+import axios from "axios";
 import { toast } from "react-toastify";
-
+import { getToken } from "../auth/auth";
 const Product = () => {
   const { id } = useParams();
   const { data, addToCart, removeFromCart, cart, refreshData } = useContext(AppContext);
@@ -17,7 +17,10 @@ const Product = () => {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          `${baseUrl}/api/product/${id}`
+          `${baseUrl}/api/product/${id}`,
+          {
+            headers: { "Authorization": `Bearer ${getToken()}` }
+          }
         );
         setProduct(response.data);
         console.log(response.data);
@@ -32,7 +35,7 @@ const Product = () => {
     const fetchImage = async () => {
       const response = await axios.get(
         `${baseUrl}/api/product/${id}/image`,
-        { responseType: "blob" }
+        { responseType: "blob" , headers: { "Authorization": `Bearer ${getToken()}` } }
       );
       setImageUrl(URL.createObjectURL(response.data));
     };
@@ -63,84 +66,102 @@ const Product = () => {
 
   if (!product) {
     return (
-      <div className="container mt-5 pt-5">
-        <div className="d-flex justify-content-center align-items-center" style={{ height: "400px" }}>
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
+      <div className="max-w-7xl mx-auto mt-20 px-4">
+        <div className="flex justify-center items-center h-[400px]">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
         </div>
       </div>
     );
   }
-
+  
   return (
-    <div className="container mt-5 pt-5">
-      <div className="row">
+    <div className="max-w-7xl mx-auto mt-20 px-4">
+      <div className="grid md:grid-cols-2 gap-8">
+  
         {/* Product Image */}
-        <div className="col-md-6 mb-4">
-          <div className="card border-0">
+        <div className="mb-4">
+          <div className="bg-white rounded-lg shadow p-4">
             <img
               src={imageUrl}
               alt={product.name}
-              className="card-img-top img-fluid"
-              style={{ maxHeight: "500px", objectFit: "contain" }}
+              className="w-full max-h-[500px] object-contain"
             />
           </div>
         </div>
-
+  
         {/* Product Details */}
-        <div className="col-md-6">
-          <div className="d-flex justify-content-between align-items-center mb-2">
-            <span className="badge bg-secondary">{product.category}</span>
-            <small className="text-muted">
+        <div>
+  
+          <div className="flex justify-between items-center mb-2">
+            <span className="bg-gray-200 text-gray-700 text-sm px-3 py-1 rounded">
+              {product.category}
+            </span>
+  
+            <span className="text-sm text-gray-500">
               Listed: {new Date(product.releaseDate).toLocaleDateString()}
-            </small>
+            </span>
           </div>
-
-          <h2 className="text-capitalize mb-1">{product.name}</h2>
-          <p className="text-muted fst-italic mb-4">~ {product.brand}</p>
-
+  
+          <h2 className="text-2xl font-semibold capitalize mb-1">
+            {product.name}
+          </h2>
+  
+          <p className="text-gray-500 italic mb-4">
+            ~ {product.brand}
+          </p>
+  
           <div className="mb-4">
-            <h5 className="mb-2">Product Description:</h5>
-            <p>{product.description}</p>
+            <h5 className="font-semibold mb-2">
+              Product Description:
+            </h5>
+            <p className="text-gray-700">
+              {product.description}
+            </p>
           </div>
-
-          <h3 className="fw-bold mb-3">₹ {product.price}</h3>
-
-          <div className="d-grid gap-2 mb-3">
+  
+          <h3 className="text-2xl font-bold mb-3">
+            Rs. {Number(product.price).toLocaleString("en-LK")}/-
+          </h3>
+  
+          <div className="grid gap-2 mb-3">
             <button
-              className="btn btn-primary btn-lg"
+              className="w-full bg-blue-600 text-white py-3 rounded-lg text-lg hover:bg-blue-700 transition disabled:bg-gray-400"
               onClick={handlAddToCart}
               disabled={!product.productAvailable || product.stockQuantity == 0}
             >
               {product.stockQuantity !== 0 ? "Add to Cart" : "Out of Stock"}
             </button>
           </div>
-
+  
           <p className="mb-4">
-            <span className="me-2">Stock Available:</span>
-            <span className="fw-bold text-success">{product.stockQuantity}</span>
+            <span className="mr-2">Stock Available:</span>
+            <span className="font-bold text-green-600">
+              {product.stockQuantity}
+            </span>
           </p>
-
-          <div className="d-flex gap-2">
+  
+          <div className="flex gap-3">
+  
             <button
-              className="btn btn-outline-primary"
+              className="border border-blue-600 text-blue-600 px-4 py-2 rounded hover:bg-blue-600 hover:text-white transition flex items-center gap-1"
               type="button"
               onClick={handleEditClick}
             >
-              <i className="bi bi-pencil me-1"></i>
+              <i className="bi bi-pencil"></i>
               Update
             </button>
-
+  
             <button
-              className="btn btn-outline-danger"
+              className="border border-red-600 text-red-600 px-4 py-2 rounded hover:bg-red-600 hover:text-white transition flex items-center gap-1"
               type="button"
               onClick={deleteProduct}
             >
-              <i className="bi bi-trash me-1"></i>
+              <i className="bi bi-trash"></i>
               Delete
             </button>
+  
           </div>
+  
         </div>
       </div>
     </div>

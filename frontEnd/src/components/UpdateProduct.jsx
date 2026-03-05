@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-
+import { getToken } from "../auth/auth";
 const UpdateProduct = () => {
   const { id } = useParams();
   const [product, setProduct] = useState({});
@@ -31,7 +31,10 @@ const UpdateProduct = () => {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          `${baseUrl}/api/product/${id}`
+          `${baseUrl}/api/product/${id}`,
+          {
+            headers: { "Authorization": `Bearer ${getToken()}` }
+          }
         );
 
         setProduct(response.data);
@@ -126,99 +129,102 @@ const UpdateProduct = () => {
 
   if (!product.id) {
     return (
-      <div className="container mt-5 pt-5">
-        <div className="d-flex justify-content-center align-items-center" style={{ height: "300px" }}>
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="h-[300px] flex items-center justify-center">
+          <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
       </div>
     );
   }
-
+  
   return (
-    <div className="container mt-5 pt-5">
-      <div className="row justify-content-center">
-        <div className="col-md-10">
-          <div className="card shadow">
-            <div className="card-body">
-              <h2 className="text-center mb-4">Update Product</h2>
-              
-              <form className="row g-3" noValidate validated={validated.toString()} onSubmit={handleSubmit}>
-                <div className="col-md-6">
-                  <label htmlFor="name" className="form-label fw-bold">Name</label>
+    <div className="max-w-5xl mx-auto px-4 mt-20">
+      <div className="flex justify-center">
+        <div className="w-full">
+          <div className="bg-white shadow-lg rounded-lg">
+            <div className="p-6">
+  
+              <h2 className="text-2xl font-bold text-center mb-6">
+                Update Product
+              </h2>
+  
+              <form
+                className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                noValidate
+                validated={validated.toString()}
+                onSubmit={handleSubmit}
+              >
+  
+                {/* Name */}
+                <div>
+                  <label className="font-semibold">Name</label>
                   <input
                     type="text"
-                    className={`form-control ${validated && errors.name ? 'is-invalid' : ''}`}
+                    className="w-full border rounded-md px-3 py-2 mt-1"
                     placeholder={product.name}
                     value={updateProduct.name}
                     onChange={handleChange}
                     name="name"
-                    id="name"
-                    required
                   />
-                  {errors.name && <div className="invalid-feedback">{errors.name}</div>}
+                  {errors.name && (
+                    <p className="text-red-500 text-sm">{errors.name}</p>
+                  )}
                 </div>
-                
-                <div className="col-md-6">
-                  <label htmlFor="brand" className="form-label fw-bold">Brand</label>
+  
+                {/* Brand */}
+                <div>
+                  <label className="font-semibold">Brand</label>
                   <input
                     type="text"
-                    name="brand"
-                    className={`form-control ${validated && errors.brand ? 'is-invalid' : ''}`}
+                    className="w-full border rounded-md px-3 py-2 mt-1"
                     placeholder={product.brand}
                     value={updateProduct.brand}
                     onChange={handleChange}
-                    id="brand"
-                    required
+                    name="brand"
                   />
-                  {errors.brand && <div className="invalid-feedback">{errors.brand}</div>}
+                  {errors.brand && (
+                    <p className="text-red-500 text-sm">{errors.brand}</p>
+                  )}
                 </div>
-                
-                <div className="col-12">
-                  <label htmlFor="description" className="form-label fw-bold">Description</label>
+  
+                {/* Description */}
+                <div className="col-span-2">
+                  <label className="font-semibold">Description</label>
                   <textarea
-                    className={`form-control ${validated && errors.description ? 'is-invalid' : ''}`}
+                    className="w-full border rounded-md px-3 py-2 mt-1"
+                    rows="3"
                     placeholder={product.description}
                     value={updateProduct.description}
                     name="description"
                     onChange={handleChange}
-                    id="description"
-                    rows="3"
-                    required
                   />
-                  {errors.description && <div className="invalid-feedback">{errors.description}</div>}
                 </div>
-                
-                <div className="col-md-4">
-                  <label htmlFor="price" className="form-label fw-bold">Price</label>
-                  <div className="input-group">
-                    <span className="input-group-text">Rs</span>
+  
+                {/* Price */}
+                <div>
+                  <label className="font-semibold">Price</label>
+                  <div className="flex">
+                    <span className="px-3 py-2 bg-gray-200 border rounded-l-md">
+                      Rs
+                    </span>
                     <input
                       type="number"
-                      className={`form-control ${validated && errors.price ? 'is-invalid' : ''}`}
-                      onChange={handleChange}
+                      className="w-full border rounded-r-md px-3 py-2"
                       value={updateProduct.price}
-                      placeholder={product.price}
+                      onChange={handleChange}
                       name="price"
-                      id="price"
-                      min="0.01"
-                      step="0.01"
-                      required
                     />
-                    {errors.price && <div className="invalid-feedback">{errors.price}</div>}
                   </div>
                 </div>
-                
-                <div className="col-md-4">
-                  <label htmlFor="category" className="form-label fw-bold">Category</label>
+  
+                {/* Category */}
+                <div>
+                  <label className="font-semibold">Category</label>
                   <select
-                    className={`form-select ${validated && errors.category ? 'is-invalid' : ''}`}
+                    className="w-full border rounded-md px-3 py-2 mt-1"
                     value={updateProduct.category}
                     onChange={handleChange}
                     name="category"
-                    id="category"
-                    required
                   >
                     <option value="">Select category</option>
                     <option value="Laptop">Laptop</option>
@@ -228,103 +234,102 @@ const UpdateProduct = () => {
                     <option value="Toys">Toys</option>
                     <option value="Fashion">Fashion</option>
                   </select>
-                  {errors.category && <div className="invalid-feedback">{errors.category}</div>}
                 </div>
-
-                <div className="col-md-4">
-                  <label htmlFor="stockQuantity" className="form-label fw-bold">Stock Quantity</label>
+  
+                {/* Stock */}
+                <div>
+                  <label className="font-semibold">Stock Quantity</label>
                   <input
                     type="number"
-                    className={`form-control ${validated && errors.stockQuantity ? 'is-invalid' : ''}`}
-                    onChange={handleChange}
-                    placeholder={product.stockQuantity}
+                    className="w-full border rounded-md px-3 py-2 mt-1"
                     value={updateProduct.stockQuantity}
+                    onChange={handleChange}
                     name="stockQuantity"
-                    id="stockQuantity"
-                    min="0"
-                    required
                   />
-                  {errors.stockQuantity && <div className="invalid-feedback">{errors.stockQuantity}</div>}
                 </div>
-                
-                <div className="col-md-6">
-                  <label htmlFor="releaseDate" className="form-label fw-bold">Release Date</label>
+  
+                {/* Release Date */}
+                <div>
+                  <label className="font-semibold">Release Date</label>
                   <input
                     type="date"
-                    className={`form-control ${validated && errors.releaseDate ? 'is-invalid' : ''}`}
-                    value={updateProduct.releaseDate ? updateProduct.releaseDate.slice(0,10) : ''}
-                    name="releaseDate"
+                    className="w-full border rounded-md px-3 py-2 mt-1"
+                    value={
+                      updateProduct.releaseDate
+                        ? updateProduct.releaseDate.slice(0, 10)
+                        : ""
+                    }
                     onChange={handleChange}
-                    id="releaseDate"
-                    required
+                    name="releaseDate"
                   />
-                  {errors.releaseDate && <div className="invalid-feedback">{errors.releaseDate}</div>}
                 </div>
-                
-                <div className="col-md-6">
-                  <label htmlFor="imageFile" className="form-label fw-bold">Image</label>
+  
+                {/* Image */}
+                <div>
+                  <label className="font-semibold">Image</label>
+  
                   {image && (
-                    <div className="mb-2">
-                      <img
-                        src={image ? URL.createObjectURL(image) : ""}
-                        alt={product.name}
-                        className="img-fluid rounded mb-2"
-                        style={{ height: "150px", objectFit: "contain" }}
-                      />
-                    </div>
-                  )}
-                  <input
-                    className={`form-control ${validated && errors.image ? 'is-invalid' : ''}`}
-                    type="file"
-                    onChange={handleImageChange}
-                    id="imageFile"
-                    accept="image/png, image/jpeg"
-                  />
-                  {errors.image && <div className="invalid-feedback">{errors.image}</div>}
-                  <div className="form-text">Leave empty to keep current image</div>
-                </div>
-                
-                <div className="col-12">
-                  <div className="form-check">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      name="productAvailable"
-                      id="productAvailable"
-                      checked={updateProduct.productAvailable}
-                      onChange={(e) =>
-                        setUpdateProduct({ ...updateProduct, productAvailable: e.target.checked })
-                      }
+                    <img
+                      src={URL.createObjectURL(image)}
+                      alt={product.name}
+                      className="h-[150px] object-contain rounded mb-2"
                     />
-                    <label className="form-check-label" htmlFor="productAvailable">
-                      Product Available
-                    </label>
-                  </div>
+                  )}
+  
+                  <input
+                    type="file"
+                    className="w-full border rounded-md px-3 py-2"
+                    onChange={handleImageChange}
+                  />
+  
+                  <p className="text-sm text-gray-500">
+                    Leave empty to keep current image
+                  </p>
                 </div>
-
-                <div className="col-12 mt-4">
+  
+                {/* Checkbox */}
+                <div className="col-span-2 flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={updateProduct.productAvailable}
+                    onChange={(e) =>
+                      setUpdateProduct({
+                        ...updateProduct,
+                        productAvailable: e.target.checked,
+                      })
+                    }
+                  />
+                  <label>Product Available</label>
+                </div>
+  
+                {/* Buttons */}
+                <div className="col-span-2 mt-4 flex gap-3">
                   {loading ? (
                     <button
-                      className="btn btn-primary"
-                      type="button"
+                      className="bg-blue-600 text-white px-4 py-2 rounded flex items-center"
                       disabled
                     >
-                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
                       Updating...
                     </button>
                   ) : (
-                    <button type="submit" className="btn btn-primary">
+                    <button
+                      type="submit"
+                      className="bg-blue-600 text-white px-4 py-2 rounded"
+                    >
                       Update Product
                     </button>
                   )}
-                  <button 
-                    type="button" 
-                    className="btn btn-outline-secondary ms-2"
-                    onClick={() => navigate('/')}
+  
+                  <button
+                    type="button"
+                    className="border border-gray-400 px-4 py-2 rounded"
+                    onClick={() => navigate("/")}
                   >
                     Cancel
                   </button>
                 </div>
+  
               </form>
             </div>
           </div>

@@ -1,2 +1,7 @@
-# Project exclude paths
+# Node / React
+/frontEnd/node_modules/
+/frontEnd/build/
+/frontEnd/.env
+
+# Java / Spring Boot
 /backEnd/target/
