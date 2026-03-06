@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { getToken } from "../auth/auth";
 import LogoutButton from "../auth/LogoutButton";
+//import SearchResults from "./SearchResults";
 const Navbar = ({ onSelectCategory }) => {
   const getInitialTheme = () => {
     const storedTheme = localStorage.getItem("theme");
@@ -258,6 +259,7 @@ const handleLinkClick = () => {
                   </button>
                 )}
               </form>
+              {/* <SearchResults/> */}
   
               {/* No Products Alert */}
               {showNoProductsMessage && (
