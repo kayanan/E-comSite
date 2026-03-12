@@ -12,7 +12,7 @@ import UpdateProduct from './components/UpdateProduct'
 import Order from './components/Order'
 import SearchResults from './components/SearchResults'
 import LoginPage from './components/Login'
-import SignupPage from './components/SignUp'
+import SignupPage from './components/Signup'
 import ProtectedRoute from './auth/ProtectedRoute'
 function App() {
 
