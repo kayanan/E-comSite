@@ -1,7 +1,10 @@
 package com.kayanan.springecom.controller;
 
+import jakarta.servlet.http.Cookie;
 import com.kayanan.springecom.service.auth.JwtService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,19 +29,29 @@ public class UserController {
 
     @PostMapping("register")
     public User register(@RequestBody User user) {
+
         return service.saveUser(user);
     }
 
     @PostMapping("login")
-    public String login(@RequestBody User user){
+    public ResponseEntity<String> login(@RequestBody User user, HttpServletResponse response){
 
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
 
-        if(authentication.isAuthenticated())
-            return jwtService.generateToken(user.getUsername());
+        if(authentication.isAuthenticated()) {
+            String token = jwtService.generateToken(user.getUsername());
+            Cookie cookie = new Cookie("TOKEN", token);
+
+            cookie.setPath("/");
+            cookie.setMaxAge(60 * 60);
+            cookie.setHttpOnly(false);
+            cookie.setSecure(false);
+            response.addCookie(cookie);
+            return ResponseEntity.ok(token);
+        }
         else
-            return "Login Failed";
+            return ResponseEntity.status(404).body("Wrong username or password");
 
     }
 

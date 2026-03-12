@@ -28,8 +28,11 @@ export default function LoginPage() {
       const res = await axios.post(`${baseUrl}/login`, {
         username: email,
         password,
+      },{
+        withCredentials:true
       });
-
+      console.log(document.cookie,"cookie")
+      console.log(res)
       setToken(res.data);
       navigate(from, { replace: true });
     } catch (err) {

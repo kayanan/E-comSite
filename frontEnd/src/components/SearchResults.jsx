@@ -11,7 +11,7 @@ const SearchResults = () => {
 
   useEffect(() => {
     // Check if search data is available in location state
-    if (location.state && location.state.searchData) {
+    if ( location?.state?.searchData) {
       setSearchData(location.state.searchData);
       setLoading(false);
     } else {
