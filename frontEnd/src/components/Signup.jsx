@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { setToken } from "../auth/auth";
 
-export default function SignupPage() {
+const SignupPage= ()=> {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -87,3 +87,5 @@ export default function SignupPage() {
     </div>
   );
 }
+
+export default SignupPage;
