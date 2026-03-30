@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.kayanan.springecom.model.User;
 import com.kayanan.springecom.service.auth.UserService;
 
+import javax.naming.AuthenticationException;
+
 @RestController
 public class UserController {
 
@@ -34,24 +36,29 @@ public class UserController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<String> login(@RequestBody User user, HttpServletResponse response){
-
+    public ResponseEntity<String> login(@RequestBody User user, HttpServletResponse response) {
+    try{
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
 
-        if(authentication.isAuthenticated()) {
-            String token = jwtService.generateToken(user.getUsername());
-            Cookie cookie = new Cookie("TOKEN", token);
+        String token = jwtService.generateToken(user.getUsername());
+        Cookie cookie = new Cookie("TOKEN", token);
 
-            cookie.setPath("/");
-            cookie.setMaxAge(60 * 60);
-            cookie.setHttpOnly(false);
-            cookie.setSecure(false);
-            response.addCookie(cookie);
-            return ResponseEntity.ok(token);
-        }
-        else
-            return ResponseEntity.status(404).body("Wrong username or password");
+        cookie.setPath("/");
+        cookie.setMaxAge(60 * 60);
+        cookie.setHttpOnly(false);
+        cookie.setSecure(false);
+        response.addCookie(cookie);
+        return ResponseEntity.ok(token);
+    }
+    catch (Exception e){
+        return ResponseEntity.status(404).body(e.getMessage());
+    }
+
+
+
+
+
 
     }
 

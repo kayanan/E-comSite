@@ -1,0 +1,42 @@
+version: "5.1"
+
+services:
+  web:
+    build: ./frontEnd
+    container_name: react_app
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_BASE_URL: http://localhost:8080
+      restart: always
+
+  api:
+    build: ./backEnd
+    container_name: spring_app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      FRONT_END_URL: http://localhost:5173
+      restart: always
+
+  db:
+    image: postgres:15
+    container_name: postgres_db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  postgres_data:

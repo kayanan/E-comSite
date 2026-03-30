@@ -32,10 +32,11 @@ public class SecurityConfig {
     private JwtFilter jwtFilter;
 
     @Value("${front.end.url}")
-    private String frontEndUrl;
+    private String[] frontEndUrl;
 
     @Bean
     public AuthenticationProvider authProvider() {
+        System.out.println("inside Auth provider");
         DaoAuthenticationProvider provider=new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
@@ -45,6 +46,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        System.out.println("inside sec Filter Chain");
 
         http
                 .cors(cors -> {})
@@ -78,6 +80,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        System.out.println("inside Auth manager");
         return config.getAuthenticationManager();
     }
 
