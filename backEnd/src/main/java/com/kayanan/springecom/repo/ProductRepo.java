@@ -3,6 +3,7 @@ package com.kayanan.springecom.repo;
 import com.kayanan.springecom.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,4 +16,11 @@ public interface ProductRepo extends JpaRepository<Product, Integer> {
             "LOWER(p.brand) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(p.category) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     List<Product> searchProducts(String keyword);
+
+    @Query(value = """
+    SELECT * FROM product
+    WHERE similarity(name, :message) > 0.3
+    ORDER BY similarity(name, :message) DESC
+    """, nativeQuery = true)
+    List<Product> findProducts(String message);
 }
