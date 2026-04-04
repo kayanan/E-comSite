@@ -70,119 +70,119 @@ const Home = ({ selectedCategory }) => {
   
   return (
     <>
-      {/* Toast Notification */}
-      <div className="fixed top-0 right-0 p-3 z-50">
-        {showToast && (
-          <div className="bg-white shadow-lg rounded-lg w-72 overflow-hidden border">
-            
-            <div className="flex justify-between items-center bg-green-600 text-white px-3 py-2">
-              <strong>Added to Cart</strong>
-              <button
-                onClick={() => setShowToast(false)}
-                className="text-white font-bold"
-              >
-                ✕
-              </button>
-            </div>
-  
-            <div className="p-3">
-              {toastProduct && (
-                <div className="flex items-center gap-2">
-                  <img
-                    src={convertBase64ToDataURL(toastProduct.imageData)}
-                    alt={toastProduct.name}
-                    className="w-10 h-10 rounded object-cover"
-                    onError={(e) => {
-                      e.target.src = unplugged;
-                    }}
-                  />
-  
-                  <div>
-                    <div className="font-bold">{toastProduct.name}</div>
-                    <small className="text-gray-500">
-                      Successfully added to your cart!
-                    </small>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+      <div className="fixed top-5 right-5 z-50">
+  {showToast && (
+    <div className="bg-white shadow-xl rounded-xl w-80 border overflow-hidden animate-slideIn">
+
+      <div className="flex justify-between items-center bg-green-500 text-white px-4 py-2">
+        <span className="font-semibold">Added to Cart</span>
+        <button
+          onClick={() => setShowToast(false)}
+          className="text-white text-lg"
+        >
+          ✕
+        </button>
       </div>
-  
-      <div className="max-w-7xl mx-auto mt-10 pt-10 px-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-  
-          {!filteredProducts || filteredProducts.length === 0 ? (
-            <div className="col-span-full text-center my-10">
-              <h4 className="text-xl font-semibold">No Products Available</h4>
-            </div>
-          ) : (
-            filteredProducts?.length > 0 &&
-            filteredProducts.map((product) => {
-              const {
-                id,
-                brand,
-                name,
-                price,
-                productAvailable,
-                imageData,
-                stockQuantity,
-              } = product;
-  
-              return (
-                <div key={id}>
-                  <div
-                    className={`h-full rounded-lg shadow-sm overflow-hidden ${
-                      !productAvailable ? "bg-gray-100" : "bg-white"
-                    }`}
-                  >
-                    <Link
-                      to={`/product/${id}`}
-                      className="block text-gray-900 no-underline"
-                    >
-                      <img
-                        src={convertBase64ToDataURL(imageData)}
-                        alt={name}
-                        className="w-full h-[150px] object-cover p-2"
-                        onError={(e) => {
-                          e.target.src = unplugged;
-                        }}
-                      />
-  
-                      <div className="p-4 flex flex-col h-full">
-                        <h5 className="text-lg font-semibold">
-                          {name.toUpperCase()}
-                        </h5>
-  
-                        <p className="text-gray-500 italic">~ {brand}</p>
-  
-                        <hr className="my-2" />
-  
-                        <div className="mt-auto">
-                          <h5 className="mb-2 font-bold text-lg">
-                            Rs. {price.toLocaleString("en-LK")}/-
-                          </h5>
-  
-                          <button
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition disabled:bg-gray-400"
-                            onClick={(e) => handleAddToCart(e, product)}
-                            disabled={!productAvailable || stockQuantity === 0}
-                          >
-                            {stockQuantity !== 0
-                              ? "Add to Cart"
-                              : "Out of Stock"}
-                          </button>
-                        </div>
-                      </div>
-                    </Link>
-                  </div>
-                </div>
-              );
-            })
-          )}
+
+      <div className="p-4 flex items-center gap-3">
+        <img
+          src={convertBase64ToDataURL(toastProduct?.imageData)}
+          className="w-12 h-12 rounded-lg object-cover border"
+        />
+        <div>
+          <p className="font-semibold">{toastProduct?.name}</p>
+          <p className="text-sm text-gray-500">
+            Successfully added to cart
+          </p>
         </div>
       </div>
+    </div>
+  )}
+</div>
+      <div className="max-w-7xl mx-auto mt-16 px-4">
+  <h2 className="text-2xl font-bold mb-6 text-gray-800">
+    Products
+  </h2>
+
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+
+    {!filteredProducts || filteredProducts.length === 0 ? (
+      <div className="col-span-full text-center py-16">
+        <img src={unplugged} className="mx-auto w-24 opacity-60 mb-4" />
+        <h4 className="text-xl font-semibold text-gray-700">
+          No Products Available
+        </h4>
+      </div>
+    ) : (
+      filteredProducts.map((product) => {
+        const {
+          id,
+          brand,
+          name,
+          price,
+          productAvailable,
+          imageData,
+          stockQuantity,
+        } = product;
+
+        return (
+          <div
+            key={id}
+            className="group bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden"
+          >
+            <Link to={`/product/${id}`}>
+
+              {/* Image */}
+              <div className="relative overflow-hidden">
+                <img
+                  src={convertBase64ToDataURL(imageData)}
+                  alt={name}
+                  className="w-full h-44 object-contain group-hover:scale-105 transition duration-300"
+                  onError={(e) => (e.target.src = unplugged)}
+                />
+
+                {!productAvailable && (
+                  <span className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
+                    Unavailable
+                  </span>
+                )}
+              </div>
+
+              {/* Content */}
+              <div className="p-4 flex flex-col h-full">
+
+                <h3 className="text-lg font-semibold text-gray-800 truncate">
+                  {name}
+                </h3>
+
+                <p className="text-sm text-gray-500 mb-2">
+                  {brand}
+                </p>
+
+                <p className="text-xl font-bold text-blue-600 mb-3">
+                  Rs. {price.toLocaleString("en-LK")}
+                </p>
+
+                <button
+                  onClick={(e) => handleAddToCart(e, product)}
+                    disabled={!productAvailable || stockQuantity === 0}
+                   className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition disabled:bg-gray-400"
+                >
+                  {stockQuantity !== 0
+                    ? "Add to Cart"
+                    : "Out of Stock"}
+                 
+                </button>
+                
+                </div>
+
+            </Link>
+          </div>
+        );
+      })
+    )}
+  </div>
+</div>
     </>
   );
 };
