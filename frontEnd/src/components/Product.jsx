@@ -35,7 +35,7 @@ const Product = () => {
     const fetchImage = async () => {
       const response = await axios.get(
         `${baseUrl}/api/product/${id}/image`,
-        { responseType: "blob" , headers: { "Authorization": `Bearer ${getToken()}` } }
+        { responseType: "blob", headers: { "Authorization": `Bearer ${getToken()}` } }
       );
       setImageUrl(URL.createObjectURL(response.data));
     };
@@ -44,7 +44,9 @@ const Product = () => {
 
   const deleteProduct = async () => {
     try {
-      await axios.delete(`${baseUrl}/api/product/${id}`);
+      await axios.delete(`${baseUrl}/api/product/${id}`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      });
       removeFromCart(id);
       console.log("Product deleted successfully");
       toast.success("Product deleted successfully");
@@ -59,7 +61,7 @@ const Product = () => {
     navigate(`/product/update/${id}`);
   };
 
-  const handlAddToCart = () => {
+  const handleAddToCart = () => {
     addToCart(product);
     toast.success("Product added to cart");
   };
@@ -73,99 +75,105 @@ const Product = () => {
       </div>
     );
   }
-  
-  return (
-    <div className="max-w-7xl mx-auto mt-20 px-4">
-      <div className="grid md:grid-cols-2 gap-8">
-  
-        {/* Product Image */}
-        <div className="mb-4">
-          <div className="bg-white rounded-lg shadow p-4">
-            <img
-              src={imageUrl}
-              alt={product.name}
-              className="w-full max-h-[500px] object-contain"
-            />
-          </div>
+
+  return (<>
+  <div className="max-w-7xl mx-auto mt-24 px-4">
+    <div className="grid md:grid-cols-2 gap-10 items-start">
+
+      {/* Image Section */}
+      <div className="bg-white rounded-2xl shadow-lg p-6 flex justify-center">
+        <img
+          src={imageUrl}
+          alt={product.name}
+          className="w-full max-h-[450px] object-contain transition hover:scale-105"
+        />
+      </div>
+
+      {/* Details Section */}
+      <div className="space-y-5">
+
+        {/* Top Row */}
+        <div className="flex justify-between items-center">
+          <span className="bg-blue-100 text-blue-600 text-xs font-medium px-3 py-1 rounded-full">
+            {product.category}
+          </span>
+
+          <span className="text-sm text-gray-400">
+            {new Date(product.releaseDate).toLocaleDateString()}
+          </span>
         </div>
-  
-        {/* Product Details */}
+
+        {/* Title */}
+        <h1 className="text-3xl font-bold text-gray-800">
+          {product.name}
+        </h1>
+
+        {/* Brand */}
+        <p className="text-gray-500 text-sm">
+          Brand: <span className="font-medium">{product.brand}</span>
+        </p>
+
+        {/* Price */}
+        <div className="text-3xl font-bold text-blue-600">
+          Rs. {Number(product.price).toLocaleString("en-LK")}
+        </div>
+
+        {/* Description */}
         <div>
-  
-          <div className="flex justify-between items-center mb-2">
-            <span className="bg-gray-200 text-gray-700 text-sm px-3 py-1 rounded">
-              {product.category}
-            </span>
-  
-            <span className="text-sm text-gray-500">
-              Listed: {new Date(product.releaseDate).toLocaleDateString()}
-            </span>
-          </div>
-  
-          <h2 className="text-2xl font-semibold capitalize mb-1">
-            {product.name}
-          </h2>
-  
-          <p className="text-gray-500 italic mb-4">
-            ~ {product.brand}
-          </p>
-  
-          <div className="mb-4">
-            <h5 className="font-semibold mb-2">
-              Product Description:
-            </h5>
-            <p className="text-gray-700">
-              {product.description}
-            </p>
-          </div>
-  
-          <h3 className="text-2xl font-bold mb-3">
-            Rs. {Number(product.price).toLocaleString("en-LK")}/-
+          <h3 className="font-semibold mb-1 text-gray-700">
+            Description
           </h3>
-  
-          <div className="grid gap-2 mb-3">
-            <button
-              className="w-full bg-blue-600 text-white py-3 rounded-lg text-lg hover:bg-blue-700 transition disabled:bg-gray-400"
-              onClick={handlAddToCart}
-              disabled={!product.productAvailable || product.stockQuantity == 0}
-            >
-              {product.stockQuantity !== 0 ? "Add to Cart" : "Out of Stock"}
-            </button>
-          </div>
-  
-          <p className="mb-4">
-            <span className="mr-2">Stock Available:</span>
-            <span className="font-bold text-green-600">
-              {product.stockQuantity}
-            </span>
+          <p className="text-gray-600 leading-relaxed">
+            {product.description}
           </p>
-  
-          <div className="flex gap-3">
-  
-            <button
-              className="border border-blue-600 text-blue-600 px-4 py-2 rounded hover:bg-blue-600 hover:text-white transition flex items-center gap-1"
-              type="button"
-              onClick={handleEditClick}
-            >
-              <i className="bi bi-pencil"></i>
-              Update
-            </button>
-  
-            <button
-              className="border border-red-600 text-red-600 px-4 py-2 rounded hover:bg-red-600 hover:text-white transition flex items-center gap-1"
-              type="button"
-              onClick={deleteProduct}
-            >
-              <i className="bi bi-trash"></i>
-              Delete
-            </button>
-  
-          </div>
-  
+        </div>
+
+        {/* Stock */}
+        <div className="text-sm">
+          Stock:
+          <span
+            className={`ml-2 font-semibold ${product.stockQuantity > 0
+              ? "text-green-600"
+              : "text-red-500"
+              }`}
+          >
+            {product.stockQuantity > 0
+              ? `${product.stockQuantity} available`
+              : "Out of stock"}
+          </span>
+        </div>
+
+        {/* Add to Cart */}
+        <button
+          onClick={handleAddToCart}
+          disabled={!product.productAvailable || product.stockQuantity === 0}
+          className="w-full bg-blue-600 text-white py-3 rounded-xl text-lg font-medium hover:bg-blue-700 transition disabled:bg-gray-400"
+        >
+          {product.stockQuantity !== 0 ? "Add to Cart" : "Out of Stock"}
+        </button>
+
+        {/* Actions */}
+        <div className="flex gap-3">
+
+          <button
+            onClick={handleEditClick}
+            className="flex-1 border border-blue-600 text-blue-600 py-2 rounded-xl hover:bg-blue-600 hover:text-white transition"
+          >
+            ✏️ Update
+          </button>
+
+          <button
+            onClick={deleteProduct}
+            className="flex-1 border border-red-600 text-red-600 py-2 rounded-xl hover:bg-red-600 hover:text-white transition"
+          >
+            🗑 Delete
+          </button>
+
         </div>
       </div>
     </div>
-  );
+  </div>
+  </>)
 };
 
 export default Product;

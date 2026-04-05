@@ -76,12 +76,7 @@ const AddProduct = () => {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    const form = event.currentTarget;
-    setValidated(true);
-    if (!validateForm() || !form.checkValidity()) {
-      event.stopPropagation();
-      return;
-    }
+    if (!validateForm()) return;
 
     setLoading(true);
     const formData = new FormData();
@@ -123,66 +118,82 @@ const AddProduct = () => {
       });
   };
 
-  return (
-    <div className="max-w-6xl mx-auto mt-10 pt-6 px-4">
-      <form noValidate onSubmit={submitHandler} className="grid grid-cols-12 gap-6">
+  return (<div className="max-w-5xl mx-auto mt-24 px-4">
+    <div className="bg-white/90 backdrop-blur-md shadow-xl rounded-2xl border border-gray-100 p-8">
   
-        <div className="col-span-12 md:col-span-6">
-          <label className="block mb-1 font-medium">Name</label>
+      <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
+        Add New Product
+      </h2>
+  
+      <form onSubmit={submitHandler} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+  
+        {/* Name */}
+        <div>
+          <label className="text-sm font-medium text-gray-700">Name</label>
           <input
             type="text"
             name="name"
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full mt-2 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-400 outline-none"
             value={product.name}
             onChange={handleInputChange}
           />
-          {errors.name && <div className="text-red-500 text-sm">{errors.name}</div>}
+          {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
         </div>
   
-        <div className="col-span-12 md:col-span-6">
-          <label className="block mb-1 font-medium">Brand</label>
+        {/* Brand */}
+        <div>
+          <label className="text-sm font-medium text-gray-700">Brand</label>
           <input
             type="text"
             name="brand"
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full mt-2 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-400 outline-none"
             value={product.brand}
             onChange={handleInputChange}
           />
-          {errors.brand && <div className="text-red-500 text-sm">{errors.brand}</div>}
+          {errors.brand && <p className="text-red-500 text-sm">{errors.brand}</p>}
         </div>
   
-        <div className="col-span-12">
-          <label className="block mb-1 font-medium">Description</label>
+        {/* Description */}
+        <div className="md:col-span-2">
+          <label className="text-sm font-medium text-gray-700">Description</label>
           <textarea
+            rows="3"
             name="description"
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full mt-2 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-400 outline-none"
             value={product.description}
             onChange={handleInputChange}
           />
           {errors.description && (
-            <div className="text-red-500 text-sm">{errors.description}</div>
+            <p className="text-red-500 text-sm">{errors.description}</p>
           )}
         </div>
   
-        <div className="col-span-12 md:col-span-4">
-          <label className="block mb-1 font-medium">Price</label>
-          <input
-            type="number"
-            name="price"
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={product.price}
-            onChange={handleInputChange}
-          />
-          {errors.price && <div className="text-red-500 text-sm">{errors.price}</div>}
+        {/* Price */}
+        <div>
+          <label className="text-sm font-medium text-gray-700">Price</label>
+          <div className="flex mt-2">
+            <span className="px-4 py-3 bg-gray-100 border rounded-l-xl text-gray-600">
+              Rs
+            </span>
+            <input
+              type="number"
+              name="price"
+              className="w-full px-4 py-3 border rounded-r-xl focus:ring-2 focus:ring-blue-400 outline-none"
+              value={product.price}
+              onChange={handleInputChange}
+            />
+          </div>
+          {errors.price && <p className="text-red-500 text-sm">{errors.price}</p>}
         </div>
   
-        <div className="col-span-12 md:col-span-4">
-          <label className="block mb-1 font-medium">Category</label>
+        {/* Category */}
+        <div>
+          <label className="text-sm font-medium text-gray-700">Category</label>
           <select
-            className="w-full border rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            name="category"
+            className="w-full mt-2 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-400 outline-none"
             value={product.category}
             onChange={handleInputChange}
-            name="category"
           >
             <option value="">Select category</option>
             <option value="Laptop">Laptop</option>
@@ -193,79 +204,98 @@ const AddProduct = () => {
             <option value="Fashion">Fashion</option>
           </select>
           {errors.category && (
-            <div className="text-red-500 text-sm">{errors.category}</div>
+            <p className="text-red-500 text-sm">{errors.category}</p>
           )}
         </div>
   
-        <div className="col-span-12 md:col-span-4">
-          <label className="block mb-1 font-medium">Stock Quantity</label>
+        {/* Stock */}
+        <div>
+          <label className="text-sm font-medium text-gray-700">Stock Quantity</label>
           <input
             type="number"
             name="stockQuantity"
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full mt-2 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-400 outline-none"
             value={product.stockQuantity}
             onChange={handleInputChange}
           />
           {errors.stockQuantity && (
-            <div className="text-red-500 text-sm">{errors.stockQuantity}</div>
+            <p className="text-red-500 text-sm">{errors.stockQuantity}</p>
           )}
         </div>
   
-        <div className="col-span-12 md:col-span-6">
-          <label className="block mb-1 font-medium">Release Date</label>
+        {/* Release Date */}
+        <div>
+          <label className="text-sm font-medium text-gray-700">Release Date</label>
           <input
             type="date"
             name="releaseDate"
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full mt-2 px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-400 outline-none"
             value={product.releaseDate}
             onChange={handleInputChange}
           />
           {errors.releaseDate && (
-            <div className="text-red-500 text-sm">{errors.releaseDate}</div>
+            <p className="text-red-500 text-sm">{errors.releaseDate}</p>
           )}
         </div>
   
-        <div className="col-span-12 md:col-span-6 flex items-center">
+        {/* Image Upload */}
+        <div className="md:col-span-2">
+          <label className="text-sm font-medium text-gray-700">Product Image</label>
+  
+          <div className="mt-3 flex flex-col sm:flex-row gap-4 items-center">
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="h-32 w-32 object-cover rounded-xl border"
+              />
+            )}
+  
+            <input
+              type="file"
+              className="border rounded-xl px-4 py-2 w-full"
+              onChange={handleImageChange}
+            />
+          </div>
+  
+          {errors.image && (
+            <p className="text-red-500 text-sm mt-1">{errors.image}</p>
+          )}
+        </div>
+  
+        {/* Availability */}
+        <div className="md:col-span-2 flex items-center gap-3">
           <input
             type="checkbox"
             name="productAvailable"
-            className="mr-2 h-4 w-4"
             checked={product.productAvailable}
             onChange={handleInputChange}
+            className="w-5 h-5 accent-blue-600"
           />
-          <label className="font-medium">Product Available</label>
+          <label className="text-gray-700">Product Available</label>
         </div>
   
-        <div className="col-span-12">
-          <label className="block mb-1 font-medium">Image</label>
-          <input
-            type="file"
-            className="w-full border rounded-lg px-3 py-2"
-            onChange={handleImageChange}
-          />
-          {errors.image && <div className="text-red-500 text-sm">{errors.image}</div>}
-  
-          {imagePreview && (
-            <img
-              src={imagePreview}
-              alt="Preview"
-              className="max-w-[150px] mt-3 rounded"
-            />
-          )}
-        </div>
-  
-        <div className="col-span-12 text-center">
+        {/* Submit */}
+        <div className="md:col-span-2 mt-6">
           <button
             type="submit"
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-3 rounded-xl font-medium hover:bg-blue-700 transition disabled:opacity-50 flex justify-center items-center"
           >
-            {loading ? "Adding..." : "Add Product"}
+            {loading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                Adding...
+              </>
+            ) : (
+              "Add Product"
+            )}
           </button>
         </div>
   
       </form>
     </div>
-  );
+  </div>)
 };
 
 export default AddProduct;
