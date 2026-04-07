@@ -147,8 +147,11 @@ const Navbar = ({ onSelectCategory }) => {
   ];
 
   if (!naveOpen) {
-    return (<></>)
+    return (<>
+
+    </>)
   }
+     
 
   return (<nav
   className="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-md border-b border-gray-200 z-50"
