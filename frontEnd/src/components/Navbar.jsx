@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { getToken } from "../auth/auth";
 import LogoutButton from "../auth/LogoutButton";
+import ChatbotPopup from "./ChatbotPopup";
 //import SearchResults from "./SearchResults";
 const Navbar = ({ onSelectCategory }) => {
   const getInitialTheme = () => {
@@ -321,7 +322,7 @@ const Navbar = ({ onSelectCategory }) => {
       </div>
     )}
   </div>
-
+<ChatbotPopup/>
   {/* No Results Alert */}
   {showNoProductsMessage && (
     <div className="absolute left-1/2 -translate-x-1/2 mt-2 w-[90%] max-w-sm bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg shadow text-center">

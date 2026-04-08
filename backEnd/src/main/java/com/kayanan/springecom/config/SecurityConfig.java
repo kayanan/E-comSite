@@ -52,7 +52,7 @@ public class SecurityConfig {
                 .cors(cors -> {})
                 .csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("register", "login","api/openai/{message}")
+                        .requestMatchers("register", "login")
                         .permitAll()
                         .anyRequest().authenticated()
                 )
