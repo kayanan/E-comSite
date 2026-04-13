@@ -1,6 +1,7 @@
 package com.kayanan.springecom.controller;
 
 import com.kayanan.springecom.model.Product;
+import com.kayanan.springecom.model.dto.AddOrUpdateProductRequest;
 import com.kayanan.springecom.service.ProductService;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +49,10 @@ public class ProductController {
 
 
     @PostMapping("/product")
-    public ResponseEntity<?> addProduct(@RequestPart Product product, @RequestPart MultipartFile imageFile) {
+    public ResponseEntity<?> addProduct(@RequestPart AddOrUpdateProductRequest product, @RequestPart MultipartFile imageFile) {
         Product savedProduct = null;
         try {
+            System.out.println(product);
             savedProduct = productService.addOrUpdateProduct(product, imageFile);
             return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
         } catch (IOException e) {
@@ -61,7 +63,7 @@ public class ProductController {
 
 
     @PutMapping("/product/{id}")
-    public ResponseEntity<String> updateProduct(@PathVariable int id, @RequestPart Product product, @RequestPart @Nullable MultipartFile imageFile) {
+    public ResponseEntity<String> updateProduct(@PathVariable int id, @RequestPart AddOrUpdateProductRequest product, @RequestPart @Nullable MultipartFile imageFile) {
         Product updatedProduct = null;
         try {
             updatedProduct = productService.addOrUpdateProduct(product, imageFile);

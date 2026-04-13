@@ -1,7 +1,9 @@
 package com.kayanan.springecom.model.dto;
 
-import java.util.List;
+import lombok.Builder;
 
+import java.util.List;
+@Builder
 public record OrderRequest(
         String customerName,
         String email,

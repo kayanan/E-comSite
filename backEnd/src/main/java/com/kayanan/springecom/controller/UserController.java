@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,11 +56,14 @@ public class UserController {
         return ResponseEntity.status(404).body(e.getMessage());
     }
 
-
-
-
-
-
     }
+    @GetMapping("checkAuth")
+    public ResponseEntity<String> checkAuthentication() {
+        System.out.println("----------inside checkAuth--------------");
+
+        return ResponseEntity.ok("authenticated");
+    }
+
+
 
 }

@@ -1,6 +1,7 @@
 package com.kayanan.springecom.service;
 
 import com.kayanan.springecom.model.Product;
+import com.kayanan.springecom.model.dto.AddOrUpdateProductRequest;
 import com.kayanan.springecom.repo.ProductRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,13 +24,20 @@ public class ProductService {
         return productRepo.findById(id).orElse(new Product(-1));
     }
 
-    public Product addOrUpdateProduct(Product product, MultipartFile image) throws IOException {
-
-        if(image!=null && !image.isEmpty()) {
-            product.setImageName(image.getOriginalFilename());
-            product.setImageType(image.getContentType());
-            product.setImageData(image.getBytes());
-        }
+    public Product addOrUpdateProduct(AddOrUpdateProductRequest productRequest, MultipartFile image) throws IOException {
+        Product product=Product.builder()
+                .category(productRequest.category())
+                .description(productRequest.description())
+                .stockQuantity(productRequest.stockQuantity())
+                .releaseDate(productRequest.releaseDate())
+                .productAvailable(productRequest.productAvailable())
+                .name(productRequest.name())
+                .price(productRequest.price())
+                .brand(productRequest.brand())
+                .imageType(image.getContentType())
+                .imageName(image.getOriginalFilename())
+                .imageData(image.getBytes())
+                .build();
 
         return productRepo.save(product);
     }

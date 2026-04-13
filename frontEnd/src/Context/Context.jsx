@@ -5,20 +5,23 @@ const AppContext = createContext({
   data: [],
   isError: "",
   cart: [],
-  navOpen:true,
-  setError:(error)=>{},
-  setNavOpen:(value)=>{},
-  addToCart: (product) => {},
-  removeFromCart: (productId) => {},
-  refreshData:() =>{},
-  updateStockQuantity: (productId, newQuantity) =>{}  
+  navOpen: true,
+  setError: (error) => { },
+  setNavOpen: (value) => { },
+  addToCart: (product) => { },
+  removeFromCart: (productId) => { },
+  refreshData: () => { },
+  updateStockQuantity: (productId, newQuantity) => { },
+  isAuthenticated: true,
+  setIsauthenticated: () => { }
 });
 
 export const AppProvider = ({ children }) => {
   const [data, setData] = useState([]);
+  const [isAuthenticated, setIsauthenticated] = useState(true);
   const [isError, setIsError] = useState("");
   const [cart, setCart] = useState(JSON.parse(localStorage.getItem('cart')) || []);
-  const [isNavOpen,setIsNavOpen]= useState(false);
+  const [isNavOpen, setIsNavOpen] = useState(false);
   const baseUrl = import.meta.env.VITE_BASE_URL;
 
 
@@ -39,23 +42,23 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  const setNavOpen=(value)=>{
+  const setNavOpen = (value) => {
     setIsNavOpen(value);
   }
 
 
 
   const removeFromCart = (productId) => {
-    console.log("productID",productId)
+    console.log("productID", productId)
     const updatedCart = cart.filter((item) => item.id !== productId);
     setCart(updatedCart);
     localStorage.setItem('cart', JSON.stringify(updatedCart));
-    console.log("CART",cart)
+    console.log("CART", cart)
   };
 
-  const setError=(value)=>{
+  const setError = (value) => {
     console.log("======================in context")
-    setIsError(prev=>value);
+    setIsError(prev => value);
   }
 
   const refreshData = async () => {
@@ -70,10 +73,11 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  const clearCart =() =>{
+
+  const clearCart = () => {
     setCart([]);
   }
-  
+
   useEffect(() => {
     refreshData();
   }, []);
@@ -82,9 +86,9 @@ export const AppProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cart));
   }, [cart]);
-  
+
   return (
-    <AppContext.Provider value={{ data, isError, cart, naveOpen:isNavOpen,setError,setNavOpen, addToCart, removeFromCart,refreshData, clearCart  }}>
+    <AppContext.Provider value={{ data, isError, cart, naveOpen: isNavOpen, setError, setNavOpen, addToCart, removeFromCart, refreshData, clearCart, isAuthenticated, setIsauthenticated }}>
       {children}
     </AppContext.Provider>
   );
