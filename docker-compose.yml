@@ -7,7 +7,7 @@ services:
     ports:
       - "5173:5173"
     environment:
-      VITE_BASE_URL: http://localhost:8080
+      VITE_BASE_URL: ${BASE_URL}
     restart: always
 
   api:
@@ -18,11 +18,11 @@ services:
     depends_on:
       - db
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/postgres
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_DATASOURCE_URL: ${DB_CONNECTION_STRING}
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      FRONT_END_URL: http://localhost:5173
+      FRONT_END_URL: ${FRONT_END_URL}
     restart: always
 
   db:
@@ -31,9 +31,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always
