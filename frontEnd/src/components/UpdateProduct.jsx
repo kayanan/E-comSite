@@ -36,16 +36,18 @@ const UpdateProduct = () => {
             headers: { "Authorization": `Bearer ${getToken()}` }
           }
         );
-
+        console.log(response.data, "data")
         setProduct(response.data);
+        setUpdateProduct(response.data);
 
         console.log(response.data,'update product response')
       
         const responseImage = await axios.get(
           `${baseUrl}/api/product/${id}/image`,
-          { responseType: "blob" }
+          { responseType: "blob", headers: { "Authorization": `Bearer ${getToken()}` } }
         );
        const imageFile = await converUrlToFile(responseImage.data,response.data.imageName)
+       console.log(imageFile, "image")
         setImage(imageFile);     
         setUpdateProduct(response.data);
       } catch (error) {
@@ -74,10 +76,7 @@ const UpdateProduct = () => {
     console.log("images", image)
     console.log("productsdfsfsf", updateProduct)
     const updatedProduct = new FormData();
-    if (imageChanged && image) {
-      updatedProduct.append("imageFile", image);
-    }
-    
+    updatedProduct.append("imageFile", image);
     updatedProduct.append(
       "product",
       new Blob([JSON.stringify(updateProduct)], { type: "application/json" })
@@ -89,11 +88,14 @@ const UpdateProduct = () => {
       .put(`${baseUrl}/api/product/${id}`, updatedProduct, {
         headers: {
           "Content-Type": "multipart/form-data",
+           "Authorization": `Bearer ${getToken()}`
+
         },
       })
       .then((response) => {
         console.log("Product updated successfully:", updatedProduct);
         toast.success("product updated successfully")
+        navigate(`/product/${id}`)
       })
       .catch((error) => {
         console.error("Error updating product:", error);
@@ -101,7 +103,6 @@ const UpdateProduct = () => {
         toast.error("Failed to update product. Please try again.");
       }).finally(()=>{
         setLoading(false)
-        navigate('/')
       }
       );
   };
