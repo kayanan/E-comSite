@@ -6,6 +6,6 @@ frontEnd/.env
 # Java / Spring Boot
 backEnd/target/
 backEnd/out/
-backEnd/src/main/resources/environment
+backEnd/src/main/resources/.env
 
 .env
