@@ -29,4 +29,10 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
+      env:
+        DB_PASSWORD: ${{ vars.DB_PASSWORD }}
+        DB_URL: ${{ vars.DB_URL }}
+        FRONT_END_URL: ${{ vars.FRONT_END_URL }}
+        OPENAI_API_KEY: ${{ vars.OPENAI_API_KEY }}
+        OPENAI_API_URL: ${{ vars.OPENAI_API_URL }}
       run: mvn -B package --file backEnd/pom.xml
