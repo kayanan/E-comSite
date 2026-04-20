@@ -28,6 +28,16 @@ jobs:
         java-version: '22'
         distribution: 'temurin'
         cache: maven
+    - uses: ikalnytskyi/action-setup-postgres@v8
+      with:
+        username: postgres
+        password: ${{ vars.DB_PASSWORD }}
+        database: postgres
+        port: 5432
+        postgres-version: "14"
+        ssl: true
+      id: postgres
+      
     - name: Build with Maven
       env:
         DB_PASSWORD: ${{ vars.DB_PASSWORD }}
